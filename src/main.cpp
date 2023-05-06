@@ -1,8 +1,8 @@
 #include <Arduino.h>
 
-#define btnAdvance 2
-#define btnReset 3
-#define addressBus { A0, A1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, A4 }
+#define btnAdvance A2
+#define btnReset A3
+#define addressBus (const uint8_t[15]){ A0, A1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, A4 }
 
 void readEEPROM(int address);
 void printAddress(int address);
@@ -13,8 +13,8 @@ void setup() {
   pinMode(btnReset, INPUT);
   pinMode(btnAdvance, INPUT);
 
-  for (int i = 30; i <= 44; i++)
-    pinMode(i, OUTPUT);
+  for (auto& pin : addressBus)
+    pinMode(pin, OUTPUT);
 
   readEEPROM(0x000);
 }
@@ -38,7 +38,7 @@ void loop() {
 
 void readEEPROM(int address) {
   for (int i = 0; i < 15; i++){
-    uint8_t pin = i + 30;
+    const uint8_t& pin = addressBus[i];
     digitalWrite(pin, address & (0x1 << i));
   }
   printAddress(address);
